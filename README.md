@@ -171,7 +171,7 @@ use Doctrine\ORM\Mapping as ORM;
 class User extends BaseUser
 ...
 ```
-Now we have the entity linked to a repository, lets setup our repository in the class file
+Now we have the entity linked to a repository, lets set up our repository in the class file
 /src/Repository/Test/UserRepository.php:
 ```sh
 namespace App\Repository\Test;
@@ -188,4 +188,46 @@ class UserRepository extends EntityRepository
     }
 }
 ```
-#### ORM
+#### Docker
+An image is a class definition where we can define properties and behaviour, containers are 
+merely instances of this class. Custom docker images are created using the Docker file.
+The current Dockerfile contains:
+```sh
+# Image we are using as well as the version
+FROM php:7.4-apache
+# Set up our environmental variables
+ENV MYSQL_ROOT_USER=root
+ENV MYSQL_ROOT_PASSWORD=""
+# Copy the src library files for the site to the container.
+COPY site/src /var/www/html/src
+COPY site/public /var/www/html/public
+# Bring composer binary into the PHP container. Basically installing composer to your image. This is version 2.
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY site/composer.json /var/www/html/composer.json
+COPY site/composer.lock /var/www/html/composer.lock
+# Define our apache configuration file, copying it to the relevant path
+COPY 000-default.conf /etc/apache2/sites-enabled/000-default.conf
+# Run commands for this Dockerfile
+# Update apt-get then install unzip and zip
+# Install composer packages from the composer.json file
+RUN apt-get update && apt-get install -y \
+    unzip \
+    zip && composer install
+# Expose the port 80 for this image
+EXPOSE 80
+```
+After creating the above dockerfile, we need to build out image so that it's available for containers we will create.
+Please note that the last parameter which is "." is to specify where the Dockfile is located, which in this case 
+is the current directory, the -t is to name the image, in this case the name is composer_loc.
+```sh
+> docker build -t composer_loc .
+```
+After running the above, the image will be available under "images" in the docker application. or check by running:
+```sh
+> docker images
+```
+To access the image as well as make sure all files are copied correctly, you can access its commandline, I am using
+"winpty" because of my bash commandline application which is MINGW64, you can leave it out if you using another one:
+```sh
+> winpty docker run -it composer_loc bash
+```
