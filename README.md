@@ -191,6 +191,21 @@ class UserRepository extends EntityRepository
 #### Docker
 An image is a class definition where we can define properties and behaviour, containers are 
 merely instances of this class. Custom docker images are created using the Docker file.
+Before we start with creating an image, we need to set up its apache configuration that we will copy to the image
+on a separate conf file.
+Our conf file is:
+```sh
+<VirtualHost *:80>
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/public
+
+  <Directory /var/www>
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+  </Directory>
+</VirtualHost>
+```
 The current Dockerfile contains:
 ```sh
 # Image we are using as well as the version
@@ -227,7 +242,13 @@ After running the above, the image will be available under "images" in the docke
 > docker images
 ```
 To access the image as well as make sure all files are copied correctly, you can access its commandline, I am using
-"winpty" because of my bash commandline application which is MINGW64, you can leave it out if you using another one:
+"winpty" because of my bash commandline application which is MINGW64, you can leave it out if you are using another one:
+```sh
+> winpty docker run -it composer_loc bash
+```
+#### Docker-Compose
+This is a tool for running multiple container docker applications. You use a YAML file to configure it.
+The YAML file is the docker-compose.yml file. This is how ours look:
 ```sh
 > winpty docker run -it composer_loc bash
 ```

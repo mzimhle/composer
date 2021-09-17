@@ -8,7 +8,7 @@ $connectionParams = array(
     'dbname' => 'test',
     'user' => 'root',
     'password' => '',
-    'host' => 'localhost',
+    'host' => 'db',
     'driver' => 'pdo_mysql',
 );
 // Check if all is well.

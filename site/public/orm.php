@@ -14,7 +14,7 @@ $connectionParams = array(
     'dbname' => 'test',
     'user' => 'root',
     'password' => '',
-    'host' => 'localhost',
+    'host' => 'db',
     'driver' => 'pdo_mysql',
 );
 // obtaining the entity manager
@@ -29,9 +29,24 @@ exit;
 
 // Below is an example to insert.
 $user = new User();
-$user->setName("Mzimhle Mosiwe");
+$user->setName("Mzimhle");
 $user->setEmail("mzimhle@gtalk.com");
 $user->setCellphone("0735897700");
+
+try {
+    $entityManager->persist($user);
+    $entityManager->flush();
+    echo 'user created: '.$user->getId();
+} catch (\Exception $e) {
+    print_r($e);
+    exit;
+}
+
+// Below is an example to insert.
+$user = new User();
+$user->setName("Sakile");
+$user->setEmail("sakile@gtalk.com");
+$user->setCellphone("0735897701");
 
 try {
     $entityManager->persist($user);

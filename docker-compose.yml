@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  # Name of the container
+  composerdocker:
+    # The path to look for the Dockerfile, in this case the current folder
+    build: ./
+    # Volumes are just included folders that are outside home path of the image.
+    # These are outside the path "/var/www/html" in our case
+    # The files here will be created and their contents copied over to the container
+    volumes:
+      - ./summary:/var/www/summary
+    # Use this setting to pass environmental variables saved in the specified file to a service's container.
+    env_file:
+      - ./.env
+    # Container specific environmental variables
+    environment:
+      - DB_DATABASE=test
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=""
+    # 8084 is the local machine port and the 80 is the port to be used in the container.
+    ports:
+      - 8084:80
+    # Link to the database container
+    links:
+      - db
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: test
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    ports:
+      - 3306:3306
+    volumes:
+      - ./summary:/var/www
+# This is the declaration of the network the container CAN be connected to.
+# By default the network they all connected to is "default" how ever you can have multiple.
+networks:
+  dev:

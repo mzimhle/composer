@@ -18,5 +18,6 @@ COPY 000-default.conf /etc/apache2/sites-enabled/000-default.conf
 RUN apt-get update && apt-get install -y \
     unzip \
     zip && composer install
+RUN docker-php-ext-install mysqli pdo pdo_mysql
 # Expose the port 80 for this image
 EXPOSE 80
